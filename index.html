@@ -39,55 +39,6 @@ async function send(){
   document.getElementById('sb').disabled=false;
   inp.focus();
 }
-async function send(){
-  if(busy)return;
-  var inp=document.getElementById('inp');
-  var text=inp.value.trim();if(!text)return;
-  busy=true;inp.value='';
-  document.getElementById('sb').disabled=true;
-
-  // Mensaje del usuario
-  am('user',text,false,false);
-  hist.push({role:'user',content:text});
-
-  addDivider('Ronda 1 — Claude responde');
-
-  // Ronda 1: Claude responde
-  var t1=addTyping('claude');
-  var cr1;
-  try{ cr1=await callClaude(hist,''); } catch(e){ removeEl(t1);am('claude',e.message,false,true);busy=false;document.getElementById('sb').disabled=false;return; }
-  removeEl(t1);
-  am('claude',cr1,false,false);
-
-  addDivider('Ronda 2 — ChatGPT lee a Claude');
-
-  // Ronda 2: ChatGPT lee a Claude y responde
-  var t2=addTyping('gpt');
-  var gr1;
-  var histWithClaude=hist.concat([{role:'assistant',content:'Claude dijo: '+cr1}]);
-  try{ gr1=await callGPT(histWithClaude,'Claude acaba de responder: "'+cr1+'" — puedes comentar, complementar o diferir si aporta valor al usuario.'); } catch(e){ removeEl(t2);am('gpt',e.message,false,true);busy=false;document.getElementById('sb').disabled=false;return; }
-  removeEl(t2);
-  am('gpt',gr1,false,false);
-
-  addDivider('Ronda 3 — Claude lee a ChatGPT');
-
-  // Ronda 3: Claude lee a ChatGPT y da respuesta final
-  var t3=addTyping('claude');
-  var cr2;
-  var histFull=hist.concat([{role:'assistant',content:'Claude: '+cr1+'\n\nChatGPT: '+gr1}]);
-  try{ cr2=await callClaude(histFull,'ChatGPT respondio: "'+gr1+'" — si tiene algo valioso que agregar o corregir, hazlo brevemente. Si ya esta todo cubierto, confirma o resume en una linea.'); } catch(e){ removeEl(t3);am('claude',e.message,false,true);busy=false;document.getElementById('sb').disabled=false;return; }
-  removeEl(t3);
-  am('claude',cr2,false,false);
-
-  // Guardar en historial
-  hist.push({role:'assistant',content:'Claude: '+cr1+'\nChatGPT: '+gr1+'\nClaude (final): '+cr2});
-
-  addDivider('Tu turno');
-
-  busy=false;
-  document.getElementById('sb').disabled=false;
-  inp.focus();
-}
 </script>
 </body>
 </html>
