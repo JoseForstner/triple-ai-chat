@@ -1,209 +1,44 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<link rel="manifest" href="/triple-ai-chat/manifest.json">
-<meta name="theme-color" content="#7F77DD">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Triple AI">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Triple AI Chat</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f0f11;color:#e8e8e8;height:100vh;display:flex;flex-direction:column}
-:root{--claude:#7F77DD;--gpt:#1D9E75;--bg2:#1a1a1f;--bg3:#222228;--border:rgba(255,255,255,0.08);--text2:#999}
-.hdr{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg2);flex-shrink:0}
-.htitle{font-size:15px;font-weight:600}
-.badges{display:flex;gap:8px}
-.badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500}
-.bc{background:rgba(127,119,221,0.2);color:#a9a3f0;border:1px solid rgba(127,119,221,0.3)}
-.bgp{background:rgba(29,158,117,0.2);color:#4dc99a;border:1px solid rgba(29,158,117,0.3)}
-#setup{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;overflow-y:auto}
-.card{width:100%;max-width:500px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:16px}
-.ctitle{font-size:18px;font-weight:600}
-.csub{font-size:13px;color:var(--text2);line-height:1.5;margin-top:4px}
-.kg{display:flex;flex-direction:column;gap:6px}
-.kl{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px}
-.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.ki{width:100%;padding:10px 12px;font-size:13px;font-family:monospace;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:#e8e8e8}
-.ki:focus{outline:none;border-color:rgba(127,119,221,0.5)}
-.sec-title{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;padding-bottom:4px;border-bottom:1px solid var(--border)}
-.ta{width:100%;padding:10px 12px;font-size:12px;font-family:inherit;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:#e8e8e8;resize:vertical;min-height:70px;line-height:1.5}
-.ta:focus{outline:none;border-color:rgba(127,119,221,0.5)}
-.upload-area{border:1px dashed rgba(255,255,255,0.2);border-radius:8px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:border-color 0.2s;background:var(--bg3)}
-.upload-area:hover{border-color:rgba(127,119,221,0.5)}
-.upload-icon{font-size:24px}
-.upload-label{font-size:12px;color:var(--text2);text-align:center}
-.upload-hint{font-size:11px;color:rgba(153,153,153,0.6)}
-#fileInput{display:none}
-.file-indicator{display:none;align-items:center;gap:10px;padding:10px 12px;background:rgba(29,158,117,0.1);border:1px solid rgba(29,158,117,0.3);border-radius:8px}
-.file-icon{font-size:16px}
-.file-info{flex:1;display:flex;flex-direction:column;gap:2px}
-.file-name{font-size:13px;font-weight:500;color:#4dc99a}
-.file-size{font-size:11px;color:var(--text2)}
-.file-remove{font-size:16px;cursor:pointer;color:var(--text2);padding:2px 4px;border-radius:4px}
-.file-remove:hover{color:#f09595}
-.divider{display:flex;align-items:center;gap:10px;color:var(--text2);font-size:11px}
-.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
-.sbtn{padding:12px;background:var(--claude);color:white;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer}
-.sbtn:hover{opacity:0.9}
-#chat{flex:1;display:none;flex-direction:column;overflow:hidden}
-.msgs{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px}
-.msg{display:flex;flex-direction:column;gap:5px;animation:fadeIn 0.3s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.mh{display:flex;align-items:center;gap:8px}
-.av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;flex-shrink:0}
-.mn{font-size:12px;font-weight:600}
-.mt{font-size:10px;color:var(--text2)}
-.mb{padding:11px 14px;border-radius:12px;font-size:13px;line-height:1.65;border:1px solid var(--border);background:var(--bg2);white-space:pre-wrap;word-break:break-word;max-width:88%}
-.ub{background:rgba(127,119,221,0.12);border-color:rgba(127,119,221,0.2);max-width:72%;align-self:flex-end}
-.tk{color:var(--text2);font-style:italic;font-size:12px}
-.eb{background:rgba(226,75,74,0.1);border-color:rgba(226,75,74,0.3);color:#f09595}
-.turn-divider{display:flex;align-items:center;gap:8px;padding:4px 0}
-.turn-divider::before,.turn-divider::after{content:'';flex:1;height:1px;background:var(--border)}
-.turn-divider span{font-size:10px;color:rgba(153,153,153,0.5);white-space:nowrap}
-.ia{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:flex-end;background:var(--bg2);flex-shrink:0}
-.iw{flex:1;display:flex;flex-direction:column;gap:8px}
-.ci{width:100%;padding:10px 14px;font-size:13px;font-family:inherit;border:1px solid var(--border);border-radius:10px;background:var(--bg3);color:#e8e8e8;resize:none;min-height:42px;max-height:120px;line-height:1.5}
-.ci:focus{outline:none;border-color:rgba(127,119,221,0.4)}
-.cr{display:flex;align-items:center;justify-content:space-between}
-.hint{font-size:10px;color:var(--text2)}
-.sndb{padding:10px 18px;background:var(--claude);color:white;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;height:42px;flex-shrink:0}
-.sndb:disabled{opacity:0.35;cursor:not-allowed}
-.typing-indicator{display:flex;align-items:center;gap:6px;padding:8px 12px;font-size:12px;color:var(--text2);font-style:italic}
-.typing-dots{display:flex;gap:3px}
-.typing-dots span{width:4px;height:4px;border-radius:50%;background:var(--text2);animation:bounce 1.2s infinite}
-.typing-dots span:nth-child(2){animation-delay:0.2s}
-.typing-dots span:nth-child(3){animation-delay:0.4s}
-@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
-</style>
-</head>
-<body>
-<div class="hdr">
-  <span class="htitle">Triple AI Chat</span>
-  <div class="badges"><span class="badge bc">Claude</span><span class="badge bgp">ChatGPT</span></div>
-</div>
-<div id="setup">
-  <div class="card">
-    <div><div class="ctitle">Bienvenido</div><div class="csub">Conversa con Claude y ChatGPT al mismo tiempo.</div></div>
-    <div class="kg"><div class="kl"><span class="dot" style="background:#7F77DD"></span>Anthropic API Key (Claude)</div><input class="ki" type="password" id="ck" placeholder="sk-ant-..."/></div>
-    <div class="kg"><div class="kl"><span class="dot" style="background:#1D9E75"></span>OpenAI API Key (ChatGPT)</div><input class="ki" type="password" id="ok" placeholder="sk-proj-..."/></div>
-    <div class="sec-title">Contexto del proyecto</div>
-    <div class="kg">
-      <div class="kl">Subir archivo (.md, .txt)</div>
-      <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-        <div class="upload-icon">📄</div>
-        <div class="upload-label">Haz clic para subir tu archivo de contexto</div>
-        <div class="upload-hint">.md · .txt · max 2MB</div>
-      </div>
-      <input type="file" id="fileInput" accept=".md,.txt" onchange="handleFile(this)"/>
-      <div class="file-indicator" id="fileIndicator">
-        <div class="file-icon">✅</div>
-        <div class="file-info"><span class="file-name" id="fileName"></span><span class="file-size" id="fileSize"></span></div>
-        <span class="file-remove" onclick="removeFile()">✕</span>
-      </div>
-    </div>
-    <div class="divider">o escribe contexto manual</div>
-    <div class="kg"><div class="kl">Notas adicionales</div><textarea class="ta" id="ctx" placeholder="Agrega notas o contexto adicional..."></textarea></div>
-    <button class="sbtn" onclick="go()">Iniciar conversacion</button>
-  </div>
-</div>
-<div id="chat">
-  <div class="msgs" id="msgs"></div>
-  <div class="ia">
-    <div class="iw">
-      <textarea class="ci" id="inp" placeholder="Escribe tu mensaje... (Enter para enviar)" rows="1" onkeydown="hk(event)"></textarea>
-      <div class="cr">
-        <span class="hint">Shift+Enter para nueva linea · 3 rondas de debate</span>
-      </div>
-    </div>
-    <button class="sndb" id="sb" onclick="send()">Enviar</button>
-  </div>
-</div>
-<script>
-var ck='',ok='',ctx='',fileCtx='',hist=[],busy=false;
+async function send(){
+  if(busy)return;
+  var inp=document.getElementById('inp');
+  var text=inp.value.trim();if(!text)return;
+  busy=true;inp.value='';
+  document.getElementById('sb').disabled=true;
 
-function handleFile(input){
-  var file=input.files[0];
-  if(!file)return;
-  if(file.size>2*1024*1024){alert('Max 2MB.');return;}
-  var reader=new FileReader();
-  reader.onload=function(e){
-    fileCtx=e.target.result;
-    document.getElementById('fileName').textContent=file.name;
-    document.getElementById('fileSize').textContent=(file.size/1024).toFixed(1)+' KB · '+fileCtx.length.toLocaleString()+' caracteres';
-    document.getElementById('fileIndicator').style.display='flex';
-  };
-  reader.readAsText(file);
-}
-function removeFile(){
-  fileCtx='';
-  document.getElementById('fileInput').value='';
-  document.getElementById('fileIndicator').style.display='none';
-}
-function go(){
-  ck=document.getElementById('ck').value.trim();
-  ok=document.getElementById('ok').value.trim();
-  var manual=document.getElementById('ctx').value.trim();
-  ctx=[fileCtx,manual].filter(Boolean).join('\n\n');
-  if(!ck||!ok){alert('Ingresa ambas API keys.');return;}
-  document.getElementById('setup').style.display='none';
-  document.getElementById('chat').style.display='flex';
-  if(ctx) addDivider('Contexto cargado');
-}
-function hk(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}
-function ts(){return new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});}
+  am('user',text,false,false);
+  hist.push({role:'user',content:text});
 
-function addDivider(txt){
-  var d=document.createElement('div');d.className='turn-divider';
-  d.innerHTML='<span>'+txt+'</span>';
-  document.getElementById('msgs').appendChild(d);sc();
-}
+  addDivider('Ronda 1 — Claude responde');
+  var t1=addTyping('claude');
+  var cr1;
+  try{ cr1=await callClaude(hist,''); }
+  catch(e){ removeEl(t1);am('claude',e.message,false,true);busy=false;document.getElementById('sb').disabled=false;return; }
+  removeEl(t1);
+  am('claude',cr1,false,false);
 
-function am(role,text,tk,eb){
-  var cols={user:'#D85A30',claude:'#7F77DD',gpt:'#1D9E75'};
-  var inits={user:'TU',claude:'AI',gpt:'GP'};
-  var names={user:'Tu',claude:'Claude',gpt:'ChatGPT'};
-  var d=document.createElement('div');d.className='msg';
-  var id='m'+Date.now()+role+Math.random();d.id=id;
-  var bubbleClass='mb'+(role==='user'?' ub':'')+(tk?' tk':'')+(eb?' eb':'');
-  d.innerHTML='<div class="mh"><div class="av" style="background:'+cols[role]+'">'+inits[role]+'</div><span class="mn" style="color:'+cols[role]+'">'+names[role]+'</span><span class="mt">'+ts()+'</span></div><div class="'+bubbleClass+'">'+text+'</div>';
-  document.getElementById('msgs').appendChild(d);sc();return id;
-}
-function um(id,text,eb){
-  var d=document.getElementById(id);if(!d)return;
-  var b=d.querySelector('.mb');
-  b.className='mb'+(eb?' eb':'');
-  b.textContent=text;sc();
-}
-function sc(){var m=document.getElementById('msgs');if(m)m.scrollTop=m.scrollHeight;}
+  addDivider('Ronda 2 — ChatGPT lee a Claude');
+  var t2=addTyping('gpt');
+  var gr1;
+  try{ gr1=await callGPT(hist,'Claude acaba de responder: "'+cr1+'" — puedes comentar, complementar o diferir si aporta valor.'); }
+  catch(e){ removeEl(t2);am('gpt',e.message,false,true);busy=false;document.getElementById('sb').disabled=false;return; }
+  removeEl(t2);
+  am('gpt',gr1,false,false);
 
-function addTyping(role){
-  var cols={claude:'#7F77DD',gpt:'#1D9E75'};
-  var names={claude:'Claude',gpt:'ChatGPT'};
-  var inits={claude:'AI',gpt:'GP'};
-  var d=document.createElement('div');
-  var id='typing'+role+Date.now();d.id=id;
-  d.className='typing-indicator';
-  d.innerHTML='<div class="av" style="background:'+cols[role]+';width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;flex-shrink:0">'+inits[role]+'</div><span style="font-size:12px;color:var(--text2)">'+names[role]+' escribiendo</span><div class="typing-dots"><span></span><span></span><span></span></div>';
-  document.getElementById('msgs').appendChild(d);sc();return id;
-}
-function removeEl(id){var el=document.getElementById(id);if(el)el.remove();}
+  addDivider('Ronda 3 — Claude lee a ChatGPT');
+  var t3=addTyping('claude');
+  var cr2;
+  try{ cr2=await callClaude(hist,'Claude respondio: "'+cr1+'" — ChatGPT respondio: "'+gr1+'" — Da tu respuesta final considerando lo que dijo ChatGPT. Si ya esta cubierto confirma en una linea. Si hay algo que corregir o agregar hazlo brevemente.'); }
+  catch(e){ removeEl(t3);am('claude',e.message,false,true);busy=false;document.getElementById('sb').disabled=false;return; }
+  removeEl(t3);
+  am('claude',cr2,false,false);
 
-async function callClaude(messages,extra){
-  var sys='Eres Claude en una conversacion de grupo con el usuario y ChatGPT. Se directo, util y conciso. Responde en el idioma del usuario.'+(ctx?'\n\nCONTEXTO DEL PROYECTO:\n'+ctx:'')+(extra?'\n\n'+extra:'');
-  var r=await fetch('http://localhost:3000/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({_apiKey:ck,model:'claude-sonnet-4-6',max_tokens:1000,system:sys,messages:messages})});
-  if(!r.ok){var e=await r.json();throw new Error('Claude: '+(e.error&&e.error.message?e.error.message:'Error'));}
-  return (await r.json()).content[0].text;
-}
-async function callGPT(messages,extra){
-  var sys='Eres ChatGPT en una conversacion de grupo con el usuario y Claude. Se directo, util y conciso. Responde en el idioma del usuario.'+(ctx?'\n\nCONTEXTO DEL PROYECTO:\n'+ctx:'')+(extra?'\n\n'+extra:'');
-  var om=[{role:'system',content:sys}].concat(messages.map(function(m){return{role:m.role==='assistant'?'assistant':'user',content:m.content};}));
-  var r=await fetch('http://localhost:3000/openai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({_apiKey:ok,model:'gpt-4o',max_tokens:1000,messages:om})});
-  if(!r.ok){var e=await r.json();throw new Error('ChatGPT: '+(e.error&&e.error.message?e.error.message:'Error'));}
-  return (await r.json()).choices[0].message.content;
-}
+  hist.push({role:'assistant',content:'Claude: '+cr1+'\nChatGPT: '+gr1+'\nClaude final: '+cr2});
+  addDivider('Tu turno');
 
+  busy=false;
+  document.getElementById('sb').disabled=false;
+  inp.focus();
+}
 async function send(){
   if(busy)return;
   var inp=document.getElementById('inp');
