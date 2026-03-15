@@ -191,14 +191,14 @@ function um(id,text,eb){var d=document.getElementById(id);if(!d)return;var b=d.q
 function sc(){var m=document.getElementById('msgs');if(m)m.scrollTop=m.scrollHeight;}
 async function cl(msgs,ex){
   var sys='Eres Claude en una conversacion grupal. Se directo y util. Responde en el idioma del usuario.'+(ctx?'\n\nCONTEXTO DEL PROYECTO:\n'+ctx:'')+(ex?'\n\n'+ex:'');
-  var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':ck,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system:sys,messages:msgs})});
+  var r=await fetch('http://localhost:3000/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({_apiKey:ck,model:'claude-sonnet-4-6',max_tokens:1000,system:sys,messages:msgs})});
   if(!r.ok){var e=await r.json();throw new Error('Claude: '+(e.error&&e.error.message?e.error.message:'Error'));}
   return (await r.json()).content[0].text;
 }
 async function og(msgs,ex){
   var sys='Eres ChatGPT en una conversacion grupal. Se directo y util. Responde en el idioma del usuario.'+(ctx?'\n\nCONTEXTO DEL PROYECTO:\n'+ctx:'')+(ex?'\n\n'+ex:'');
   var om=[{role:'system',content:sys}].concat(msgs.map(function(m){return{role:m.role==='assistant'?'assistant':'user',content:m.content};}));
-  var r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+ok},body:JSON.stringify({model:'gpt-4o',max_tokens:1000,messages:om})});
+  var r=await fetch('http://localhost:3000/openai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({_apiKey:ok,model:'gpt-4o',max_tokens:1000,messages:om})});
   if(!r.ok){var e=await r.json();throw new Error('ChatGPT: '+(e.error&&e.error.message?e.error.message:'Error'));}
   return (await r.json()).choices[0].message.content;
 }
