@@ -14,8 +14,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500}
 .bc{background:rgba(127,119,221,0.2);color:#a9a3f0;border:1px solid rgba(127,119,221,0.3)}
 .bgp{background:rgba(29,158,117,0.2);color:#4dc99a;border:1px solid rgba(29,158,117,0.3)}
-#setup{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px}
-.card{width:100%;max-width:480px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:16px}
+#setup{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;overflow-y:auto}
+.card{width:100%;max-width:500px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:16px}
 .ctitle{font-size:18px;font-weight:600}
 .csub{font-size:13px;color:var(--text2);line-height:1.5;margin-top:4px}
 .kg{display:flex;flex-direction:column;gap:6px}
@@ -23,9 +23,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .ki{width:100%;padding:10px 12px;font-size:13px;font-family:monospace;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:#e8e8e8}
 .ki:focus{outline:none;border-color:rgba(127,119,221,0.5)}
-.ta{width:100%;padding:10px 12px;font-size:12px;font-family:inherit;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:#e8e8e8;resize:vertical;min-height:90px;line-height:1.5}
+.sec-title{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.ta{width:100%;padding:10px 12px;font-size:12px;font-family:inherit;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:#e8e8e8;resize:vertical;min-height:70px;line-height:1.5}
 .ta:focus{outline:none;border-color:rgba(127,119,221,0.5)}
-.sbtn{padding:12px;background:var(--claude);color:white;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer}
+.upload-area{border:1px dashed rgba(255,255,255,0.2);border-radius:8px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:border-color 0.2s;background:var(--bg3)}
+.upload-area:hover{border-color:rgba(127,119,221,0.5)}
+.upload-icon{font-size:24px}
+.upload-label{font-size:12px;color:var(--text2);text-align:center}
+.upload-hint{font-size:11px;color:rgba(153,153,153,0.6)}
+#fileInput{display:none}
+.file-indicator{display:none;align-items:center;gap:10px;padding:10px 12px;background:rgba(29,158,117,0.1);border:1px solid rgba(29,158,117,0.3);border-radius:8px}
+.file-icon{font-size:16px}
+.file-info{flex:1;display:flex;flex-direction:column;gap:2px}
+.file-name{font-size:13px;font-weight:500;color:#4dc99a}
+.file-size{font-size:11px;color:var(--text2)}
+.file-remove{font-size:16px;cursor:pointer;color:var(--text2);padding:2px 4px;border-radius:4px}
+.file-remove:hover{color:#f09595;background:rgba(226,75,74,0.1)}
+.divider{display:flex;align-items:center;gap:10px;color:var(--text2);font-size:11px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.sbtn{padding:12px;background:var(--claude);color:white;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:opacity 0.15s}
 .sbtn:hover{opacity:0.9}
 #chat{flex:1;display:none;flex-direction:column;overflow:hidden}
 .msgs{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px}
@@ -39,6 +55,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .tk{color:var(--text2);font-style:italic;font-size:12px}
 .eb{background:rgba(226,75,74,0.1);border-color:rgba(226,75,74,0.3);color:#f09595}
 .note{text-align:center;font-size:11px;color:var(--text2);padding:4px 0}
+.ctx-badge{display:flex;align-items:center;gap:6px;padding:6px 10px;background:rgba(29,158,117,0.1);border:1px solid rgba(29,158,117,0.3);border-radius:6px;font-size:11px;color:#4dc99a;align-self:center}
 .ia{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:flex-end;background:var(--bg2);flex-shrink:0}
 .iw{flex:1;display:flex;flex-direction:column;gap:8px}
 .ci{width:100%;padding:10px 14px;font-size:13px;font-family:inherit;border:1px solid var(--border);border-radius:10px;background:var(--bg3);color:#e8e8e8;resize:none;min-height:42px;max-height:120px;line-height:1.5}
@@ -64,7 +81,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div><div class="ctitle">Bienvenido</div><div class="csub">Conversa con Claude y ChatGPT al mismo tiempo.</div></div>
     <div class="kg"><div class="kl"><span class="dot" style="background:#7F77DD"></span>Anthropic API Key (Claude)</div><input class="ki" type="password" id="ck" placeholder="sk-ant-..."/></div>
     <div class="kg"><div class="kl"><span class="dot" style="background:#1D9E75"></span>OpenAI API Key (ChatGPT)</div><input class="ki" type="password" id="ok" placeholder="sk-proj-..."/></div>
-    <div class="kg"><div class="kl">Contexto del proyecto (opcional)</div><textarea class="ta" id="ctx" placeholder="Pega aqui el contexto de tu proyecto..."></textarea></div>
+    <div class="sec-title">Contexto del proyecto</div>
+    <div class="kg">
+      <div class="kl">Subir archivo (.md, .txt, .pdf)</div>
+      <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+        <div class="upload-icon">📄</div>
+        <div class="upload-label">Haz clic para subir tu archivo de contexto</div>
+        <div class="upload-hint">.md · .txt · .pdf · máx 2MB</div>
+      </div>
+      <input type="file" id="fileInput" accept=".md,.txt,.pdf" onchange="handleFile(this)"/>
+      <div class="file-indicator" id="fileIndicator">
+        <div class="file-icon">✅</div>
+        <div class="file-info">
+          <span class="file-name" id="fileName"></span>
+          <span class="file-size" id="fileSize"></span>
+        </div>
+        <span class="file-remove" onclick="removeFile()" title="Quitar archivo">✕</span>
+      </div>
+    </div>
+    <div class="divider">o escribe contexto manual</div>
+    <div class="kg">
+      <div class="kl">Notas adicionales</div>
+      <textarea class="ta" id="ctx" placeholder="Agrega notas, instrucciones o contexto adicional..."></textarea>
+    </div>
     <button class="sbtn" onclick="go()">Iniciar conversacion</button>
   </div>
 </div>
@@ -82,15 +121,53 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 <script>
-var ck='',ok='',ctx='',hist=[],debate=true,busy=false;
+var ck='',ok='',ctx='',fileCtx='',hist=[],debate=true,busy=false;
+
+function handleFile(input){
+  var file = input.files[0];
+  if(!file) return;
+  if(file.size > 2*1024*1024){ alert('El archivo es muy grande. Max 2MB.'); return; }
+  var reader = new FileReader();
+  reader.onload = function(e){
+    fileCtx = e.target.result;
+    document.getElementById('fileName').textContent = file.name;
+    var kb = (file.size/1024).toFixed(1);
+    document.getElementById('fileSize').textContent = kb + ' KB · ' + fileCtx.length.toLocaleString() + ' caracteres cargados';
+    document.getElementById('fileIndicator').style.display = 'flex';
+  };
+  if(file.type === 'application/pdf'){
+    reader.readAsDataURL(file);
+    fileCtx = '[Archivo PDF adjunto: ' + file.name + ']';
+    document.getElementById('fileName').textContent = file.name;
+    document.getElementById('fileSize').textContent = (file.size/1024).toFixed(1) + ' KB';
+    document.getElementById('fileIndicator').style.display = 'flex';
+  } else {
+    reader.readAsText(file);
+  }
+}
+
+function removeFile(){
+  fileCtx = '';
+  document.getElementById('fileInput').value = '';
+  document.getElementById('fileIndicator').style.display = 'none';
+  document.getElementById('fileName').textContent = '';
+  document.getElementById('fileSize').textContent = '';
+}
+
 function go(){
   ck=document.getElementById('ck').value.trim();
   ok=document.getElementById('ok').value.trim();
-  ctx=document.getElementById('ctx').value.trim();
+  var manualCtx=document.getElementById('ctx').value.trim();
+  ctx = [fileCtx, manualCtx].filter(Boolean).join('\n\n');
   if(!ck||!ok){alert('Ingresa ambas API keys.');return;}
   document.getElementById('setup').style.display='none';
   var c=document.getElementById('chat');c.style.display='flex';
-  if(ctx)note('Contexto del proyecto cargado.');
+  if(ctx){
+    var parts=[];
+    if(fileCtx) parts.push('Archivo: ' + document.getElementById('fileName').textContent);
+    if(manualCtx) parts.push('Notas manuales cargadas');
+    note('Contexto cargado: ' + parts.join(' + '));
+  }
 }
 function td(){debate=!debate;var t=document.getElementById('tsw');t.className='tsw'+(debate?' on':'');document.getElementById('tl').textContent=debate?'Modo debate activado':'Modo independiente';}
 function hk(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}
@@ -108,13 +185,13 @@ function am(role,text,tk,eb){
 function um(id,text,eb){var d=document.getElementById(id);if(!d)return;var b=d.querySelector('.mb');b.className='mb'+(eb?' eb':'');b.textContent=text;sc();}
 function sc(){var m=document.getElementById('msgs');if(m)m.scrollTop=m.scrollHeight;}
 async function cl(msgs,ex){
-  var sys='Eres Claude en una conversacion grupal. Se directo y util. Responde en el idioma del usuario.'+(ctx?'\n\nCONTEXTO:\n'+ctx:'')+(ex?'\n\n'+ex:'');
+  var sys='Eres Claude en una conversacion grupal. Se directo y util. Responde en el idioma del usuario.'+(ctx?'\n\nCONTEXTO DEL PROYECTO:\n'+ctx:'')+(ex?'\n\n'+ex:'');
   var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':ck,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system:sys,messages:msgs})});
   if(!r.ok){var e=await r.json();throw new Error('Claude: '+(e.error&&e.error.message?e.error.message:'Error'));}
   return (await r.json()).content[0].text;
 }
 async function og(msgs,ex){
-  var sys='Eres ChatGPT en una conversacion grupal. Se directo y util. Responde en el idioma del usuario.'+(ctx?'\n\nCONTEXTO:\n'+ctx:'')+(ex?'\n\n'+ex:'');
+  var sys='Eres ChatGPT en una conversacion grupal. Se directo y util. Responde en el idioma del usuario.'+(ctx?'\n\nCONTEXTO DEL PROYECTO:\n'+ctx:'')+(ex?'\n\n'+ex:'');
   var om=[{role:'system',content:sys}].concat(msgs.map(function(m){return{role:m.role==='assistant'?'assistant':'user',content:m.content};}));
   var r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+ok},body:JSON.stringify({model:'gpt-4o',max_tokens:1000,messages:om})});
   if(!r.ok){var e=await r.json();throw new Error('ChatGPT: '+(e.error&&e.error.message?e.error.message:'Error'));}
